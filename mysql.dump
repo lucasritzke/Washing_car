@@ -1,0 +1,33 @@
+-- Criar o banco de dados
+CREATE DATABASE IF NOT EXISTS washing_project;
+USE washing_project;
+
+-- Criar a tabela car_informations
+CREATE TABLE IF NOT EXISTS car_informations (
+    id_car INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(45) NOT NULL,
+    service_type VARCHAR(23) NOT NULL,
+    car_name VARCHAR(45) NOT NULL,
+    car_plate VARCHAR(27) NOT NULL,
+    car_image_1 LONGBLOB NOT NULL,
+    car_image_2 LONGBLOB,
+    car_image_3 LONGBLOB,
+    car_image_4 LONGBLOB,
+    CPF VARCHAR(17),
+    email VARCHAR(60) NOT NULL,
+    today_day VARCHAR(12) NOT NULL,
+    pick_up_Day VARCHAR(12) NOT NULL,
+    total_value VARCHAR(10) NOT NULL
+);
+
+-- Criar a tabela menu
+CREATE TABLE IF NOT EXISTS menu (
+    file_name VARCHAR(40) NOT NULL,
+    display_name VARCHAR(20) NOT NULL
+);
+
+-- Inserir dados na tabela menu
+INSERT INTO menu (file_name, display_name) VALUES
+('index.php', 'Home'),
+('register.php', 'Register'),
+('search.php', 'Search');
