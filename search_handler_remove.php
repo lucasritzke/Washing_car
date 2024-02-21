@@ -14,7 +14,7 @@ if (!empty($searchInput)) {
             throw new Exception("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "SELECT id_car, customer_name, today_day, pick_up_Day, total_value FROM car_informations WHERE UPPER(carCPF) = ? OR UPPER(email) = ?";
+        $sql = "SELECT id_car, customer_name, car_name, car_plate, car_mileage  FROM car_informations WHERE UPPER(carCPF) = ? OR UPPER(email) = ?";
         $stmt = $conn->prepare($sql);
 
         $searchInputUpper = strtoupper($searchInput);

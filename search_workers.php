@@ -14,12 +14,12 @@ if (!empty($searchInput)) {
             throw new Exception("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "SELECT id_car, customer_name, today_day, pick_up_Day, total_value FROM car_informations WHERE UPPER(carCPF) = ? OR UPPER(email) = ?";
+        $sql = "SELECT id, name, birthdate, sex, cpf, edit_informations, search_informations, create_new_jobs, add_workers, remove_workers, edit_workers FROM workers WHERE cpf = ?;";
         $stmt = $conn->prepare($sql);
 
         $searchInputUpper = strtoupper($searchInput);
 
-        $stmt->bind_param("ss", $searchInputUpper, $searchInputUpper);
+        $stmt->bind_param("s", $searchInputUpper);
 
         if (!$stmt->execute()) {
             throw new Exception("Execute failed: (" . $stmt->errno . ") " . $stmt->error);
@@ -46,3 +46,4 @@ if (!empty($searchInput)) {
     exit(); 
 }
 ?>
+

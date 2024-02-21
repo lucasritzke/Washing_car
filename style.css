@@ -146,7 +146,7 @@ button:hover {
   color: #000 !important;
 }
 .dark-mode {
-  color: #fff !important;
+  color: #000 !important;
 }
 
 .dark-mode #background-paragraph {
@@ -167,15 +167,16 @@ button:hover {
 .dark-mode input {
   background-color: #fff;
   color: #000 !important;
+  border-color: black;
 }
 
 .dark-mode input:hover,
 .dark-mode input:focus {
-  background-color: #eee;
+  background-color: #b9b9b9;
 }
 
 .dark-mode input[type="submit"] {
-  background-color: #fff;
+  background-color: #b9b9b9;
   color: #333 !important;
 }
 
@@ -184,7 +185,7 @@ button:hover {
 }
 
 .dark-mode label {
-  color: #fff !important;
+  color: #000 !important;
 }
 #div-background-images {
     background: #aaa;
@@ -194,7 +195,7 @@ button:hover {
 }
 
 .dark-mode #div-background-images {
-    background: #7d7d7d;
+    background: #b0afaf;
     color: #fff;
 }
 
@@ -203,7 +204,53 @@ button:hover {
 }
 
 .dark-mode #div-background-images input {
-    background-color: #7d7d7d;
+    background-color: #aeadad;
     color: #fff;
 }
+
+.car_pictures_table {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.car_picture {
+    width: 30%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 3px;
+}
+
+.car_picture img {
+    width: 30%;
+    height: auto;
+}
+
+.info-tables-container {
+    display: flex;
+}
+
+.hamburger div {
+    background-color: black;
+}
+.dark-mode .hamburger div {
+    background-color: white;
+}
+.hamburger div {
+    background-color: #333;
+}
+.dark-mode .hamburger div {
+    background-color: white;
+}
+
+.customer_information_table,
+.car_information_table,
+.service_details_table,
+.car_pictures_table {
+    margin-right: 10px; 
+    padding: 10px; 
+    width: 30%; 
+
+
+
+
 

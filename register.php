@@ -1,3 +1,22 @@
+<?php
+$servername = "mysql-server";
+$username = "root";
+$password = "lritzke";
+$database = "washing_project";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$sqlMenu = "SELECT * FROM menu";
+$resultMenu = $conn->query($sqlMenu);
+
+$sqlHamburger = "SELECT * FROM hamburger";
+$resultHamburger = $conn->query($sqlHamburger);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,8 +34,8 @@
     }
 
     .dark-mode #content {
-        background-color: #686868;
-        color: #fff;
+        background-color: #fff;
+        color: #000;
     }
 
     .light-background {
@@ -51,7 +70,9 @@
 
     <section id="menu">
         <header>
-	   <button id="toggleButton" onclick="toggleDarkMode()" style="margin-left: 1218px;font-size: 25px;">&#127765;</button>
+	   <button id="toggleButton" onclick="toggleDarkMode()" style="margin-left: 1218px;font-size: 25px;">
+<svg  style="width: 22px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M375.7 19.7c-1.5-8-6.9-14.7-14.4-17.8s-16.1-2.2-22.8 2.4L256 61.1 173.5 4.2c-6.7-4.6-15.3-5.5-22.8-2.4s-12.9 9.8-14.4 17.8l-18.1 98.5L19.7 136.3c-8 1.5-14.7 6.9-17.8 14.4s-2.2 16.1 2.4 22.8L61.1 256 4.2 338.5c-4.6 6.7-5.5 15.3-2.4 22.8s9.8 13 17.8 14.4l98.5 18.1 18.1 98.5c1.5 8 6.9 14.7 14.4 17.8s16.1 2.2 22.8-2.4L256 450.9l82.5 56.9c6.7 4.6 15.3 5.5 22.8 2.4s12.9-9.8 14.4-17.8l18.1-98.5 98.5-18.1c8-1.5 14.7-6.9 17.8-14.4s2.2-16.1-2.4-22.8L450.9 256l56.9-82.5c4.6-6.7 5.5-15.3 2.4-22.8s-9.8-12.9-17.8-14.4l-98.5-18.1L375.7 19.7zM269.6 110l65.6-45.2 14.4 78.3c1.8 9.8 9.5 17.5 19.3 19.3l78.3 14.4L402 242.4c-5.7 8.2-5.7 19 0 27.2l45.2 65.6-78.3 14.4c-9.8 1.8-17.5 9.5-19.3 19.3l-14.4 78.3L269.6 402c-8.2-5.7-19-5.7-27.2 0l-65.6 45.2-14.4-78.3c-1.8-9.8-9.5-17.5-19.3-19.3L64.8 335.2 110 269.6c5.7-8.2 5.7-19 0-27.2L64.8 176.8l78.3-14.4c9.8-1.8 17.5-9.5 19.3-19.3l14.4-78.3L242.4 110c8.2 5.7 19 5.7 27.2 0zM256 368a112 112 0 1 0 0-224 112 112 0 1 0 0 224zM192 256a64 64 0 1 1 128 0 64 64 0 1 1 -128 0z"/></svg>
+</button>
 	    <div style="margin-top: -70px;" >
             <h1>Bennin-Motorcycles Washing</h1>
             <nav>
@@ -70,6 +91,22 @@
                 </ul>
             </nav>
 	  </div>
+<div id="hamburger" class="hamburger" style="position: absolute; top: 10px; right: 1162px;width: 171px;text-align: left;border-radius: 10px;" >
+    <div style="border-radius: 8px;" >
+	<button id="hamburgerButton" onclick="toggleHamburgerMenu()"  style="margin-top: 15px;font-size: 34px; border-radius: 10px;"    >
+<svg id="hamburgerIcon" style="width: 25px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>
+</button>
+        <ul id="hamburgerMenu" style="display: none;">
+            <?php
+            if ($resultHamburger->num_rows > 0) {
+                while ($rowHamburger = $resultHamburger->fetch_assoc()) {
+                    echo '<li><a href="' . $rowHamburger["file_name"] . '">' . $rowHamburger["display_name"] . '</a></li>';
+                }
+            }
+            ?>
+        </ul>
+    </div>
+</div>
         </header>
     </section>
 
@@ -84,10 +121,42 @@
                 <input type="text" id="customerName" name="customerName" style="border-radius: 11px;" required>
                 <br>
 
+                <label for="carCPF">CPF (optional):</label>
+                <input type="text" id="carCPF" name="carCPF" style="border-radius: 11px;">
+                <br>
+
+                <label for="carEmail">Email:</label>
+                <input type="email" id="carEmail" style="border-radius: 11px;" name="carEmail" required>
+                <br>
+
                 <label for="jobType">Service type:</label>
                 <select id="jobType" name="jobType" style="border-radius: 11px;padding: 8px;">
-                    <option value="carWashing">Car Washing</option>
-                    <option value="carPolishing">Car Polishing</option>
+		<?php
+                $servername = "mysql-server";
+                $username = "root";
+                $password = "lritzke";
+                $database = "washing_project";
+
+                $conn = new mysqli($servername, $username, $password, $database);
+
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+                $sql = "SELECT job_name FROM jobs";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $jobName = $row['job_name'];
+                        echo "<option value='$jobName'>$jobName</option>";
+                    }
+                } else {
+                    echo "<option value=''>No service types found</option>";
+                }
+
+                $conn->close();
+                ?>
                 </select>
                 <br>
 
@@ -100,7 +169,7 @@
                 <br>
 
                 <label for="carMileage">Car Mileage:</label>
-                <input type="text" id="carMileage" name="carMileage" style="border-radius: 11px;" pattern="\d{1,3}(\.\d{3})*">
+                <input type="text" id="carMileage" name="carMileage" style="border-radius: 11px;" pattern="\d{1,3}(\,\d{3})*">
                 <br>
 
                 <div id="div-background-images" class="light-background" >
@@ -126,16 +195,7 @@
                     <br>
                 </div>
 
-                <label for="carCPF">CPF (optional):</label>
-                <input type="text" id="carCPF" style="border-radius: 11px;" name="carCPF" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
-                <br>
-
-                <label for="carEmail">Email:</label>
-                <input type="email" id="carEmail" style="border-radius: 11px;" name="carEmail" required>
-                <br>
-
-                <label for="todaysDay">Today's Day:</label>
-                <input type="text" id="todaysDay" name="todaysDay" value="<?= date('m-d-Y') ?>" style="border-radius: 11px;"  readonly>
+                <input type="text" id="todaysDay" name="todaysDay" value="<?= date('Y-m-d') ?>" style="border-radius: 11px; Display: none;"  readonly>
                 <br>
 
                 <label for="pickUpDay">Pick Up Day:</label>
@@ -153,6 +213,11 @@
     </div>
 
     <script>
+    function toggleHamburgerMenu() {
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        hamburgerMenu.style.display = (hamburgerMenu.style.display === 'none' || hamburgerMenu.style.display === '') ? 'block' : 'none';
+    }
+
         function previewImages(input, index) {
             var reader = new FileReader();
 
@@ -175,7 +240,7 @@
             const body = document.body;
             const header = document.querySelector('header');
             const form = document.querySelector('form');
-            const allDivs = document.querySelectorAll('.light-background, .dark-background'); // Selecionar todas as classes light-background e dark-background
+            const allDivs = document.querySelectorAll('.light-background, .dark-background'); 
             const contentDiv = document.getElementById('content');
             const paragraphs = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, a');
             const toggleButton = document.getElementById('toggleButton');
@@ -185,7 +250,6 @@
             form.classList.toggle('dark-mode');
             contentDiv.classList.toggle('dark-mode');
 
-            // Toggle dark mode para todas as classes light-background e dark-background
             allDivs.forEach((element) => {
                 element.classList.toggle('dark-background');
                 element.classList.toggle('light-background');
@@ -195,11 +259,14 @@
                 element.classList.toggle('dark-mode');
             });
 
-	    toggleButton.innerHTML = body.classList.contains('dark-mode') ? '🌑' : '&#127765;';
+		toggleButton.innerHTML = body.classList.contains('dark-mode') ? '<svg style="width: 22px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#000000" d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg>' : '<svg style="width: 22px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M375.7 19.7c-1.5-8-6.9-14.7-14.4-17.8s-16.1-2.2-22.8 2.4L256 61.1 173.5 4.2c-6.7-4.6-15.3-5.5-22.8-2.4s-12.9 9.8-14.4 17.8l-18.1 98.5L19.7 136.3c-8 1.5-14.7 6.9-17.8 14.4s-2.2 16.1 2.4 22.8L61.1 256 4.2 338.5c-4.6 6.7-5.5 15.3-2.4 22.8s9.8 13 17.8 14.4l98.5 18.1 18.1 98.5c1.5 8 6.9 14.7 14.4 17.8s16.1 2.2 22.8-2.4L256 450.9l82.5 56.9c6.7 4.6 15.3 5.5 22.8 2.4s12.9-9.8 14.4-17.8l18.1-98.5 98.5-18.1c8-1.5 14.7-6.9 17.8-14.4s2.2-16.1-2.4-22.8L450.9 256l56.9-82.5c4.6-6.7 5.5-15.3 2.4-22.8s-9.8-12.9-17.8-14.4l-98.5-18.1L375.7 19.7zM269.6 110l65.6-45.2 14.4 78.3c1.8 9.8 9.5 17.5 19.3 19.3l78.3 14.4L402 242.4c-5.7 8.2-5.7 19 0 27.2l45.2 65.6-78.3 14.4c-9.8 1.8-17.5 9.5-19.3 19.3l-14.4 78.3L269.6 402c-8.2-5.7-19-5.7-27.2 0l-65.6 45.2-14.4-78.3c-1.8-9.8-9.5-17.5-19.3-19.3L64.8 335.2 110 269.6c5.7-8.2 5.7-19 0-27.2L64.8 176.8l78.3-14.4c9.8-1.8 17.5-9.5 19.3-19.3l14.4-78.3L242.4 110c8.2 5.7 19 5.7 27.2 0zM256 368a112 112 0 1 0 0-224 112 112 0 1 0 0 224zM192 256a64 64 0 1 1 128 0 64 64 0 1 1 -128 0z"/></svg>';
+
+	          hamburgerIcon.innerHTML = body.classList.contains('dark-mode') ? '<svg style="width: 25px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>' : '<svg style="width: 25px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg>';
         }
 
+
 function displaySearchResults(results) {
-    console.log(results); // Add this line
+    console.log(results); 
 
     const searchResultsDiv = document.getElementById('searchResults');
 
@@ -225,7 +292,6 @@ function displaySearchResults(results) {
 }
 
 function viewMoreInformation(customerName) {
-    // Perform an AJAX request to fetch detailed information about the selected record
     fetch('view_information_handler.php', {
         method: 'POST',
         headers: {
@@ -235,7 +301,6 @@ function viewMoreInformation(customerName) {
     })
     .then(response => response.json())
     .then(data => {
-        // Display detailed information in a modal or alert
         alert(JSON.stringify(data));
     })
     .catch(error => {
@@ -247,3 +312,4 @@ function viewMoreInformation(customerName) {
 </body>
 
 </html>
+

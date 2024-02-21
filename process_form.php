@@ -1,4 +1,9 @@
 <?php
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+var_dump($_POST);
+
 $servername = "mysql-server";
 $username = "root";
 $password = "lritzke";
@@ -10,60 +15,40 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $customerName = $_POST["customerName"];
-    $jobType = $_POST["jobType"];
-    $carName = $_POST["carName"];
-    $carPlate = $_POST["carPlate"];
-    $carCPF = $_POST["carCPF"];
-    $carEmail = $_POST["carEmail"];
-    $todayDay = $_POST["todaysDay"];
-    $pickUpDay = $_POST["pickUpDay"];
-    $totalValue = $_POST["totalValue"];
+$customerName = mysqli_real_escape_string($conn, $_POST["customerName"]);
+$jobType = mysqli_real_escape_string($conn, $_POST["jobType"]);
+$carName = mysqli_real_escape_string($conn, $_POST["carName"]);
+$carPlate = mysqli_real_escape_string($conn, $_POST["carPlate"]);
+$carMileage = mysqli_real_escape_string($conn, $_POST["carMileage"]);
+$carCPF = mysqli_real_escape_string($conn, $_POST["carCPF"]);
+$carEmail = mysqli_real_escape_string($conn, $_POST["carEmail"]);
+$todayDay = mysqli_real_escape_string($conn, $_POST["todaysDay"]);
+$pickUpDay = mysqli_real_escape_string($conn, $_POST["pickUpDay"]);
+$totalValue = floatval(str_replace(',', '.', $_POST["totalValue"]));
 
-    $carPhotos = [];
+$carPhotos = [];
 
-    for ($i = 0; $i < count($_FILES["carPhotos"]["name"]); $i++) {
-        $tmpFilePath = $_FILES["carPhotos"]["tmp_name"][$i];
+for ($i = 0; $i < count($_FILES["carPhotos"]["name"]); $i++) {
+    $tmpFilePath = $_FILES["carPhotos"]["tmp_name"][$i];
 
-        if ($tmpFilePath != "") {
-            $imagick = new Imagick($tmpFilePath);
-            $imagick->resizeImage(800, 600, Imagick::FILTER_LANCZOS, 1);
+    if ($tmpFilePath != "") {
+        $imagick = new Imagick($tmpFilePath);
+        $imagick->resizeImage(800, 600, Imagick::FILTER_LANCZOS, 1);
 
-            // Obter os dados binários da imagem
-            $carPhotos[] = file_get_contents($tmpFilePath);
-        }
+        $carPhotos[] = mysqli_real_escape_string($conn, file_get_contents($tmpFilePath));
     }
-
-    // Preparar a declaração de inserção
-    $sql = "INSERT INTO car_informations (customer_name, service_type, car_name, car_plate, car_image_1, car_image_2, car_image_3, car_image_4, CPF, email, today_day, pick_up_Day, total_value)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-
-    // Vincular parâmetros
-    $null = null;
-    $stmt->bind_param("ssssbbbbbssss", $customerName, $jobType, $carName, $carPlate, $null, $null, $null, $null, $carCPF, $carEmail, $todayDay, $pickUpDay, $totalValue);
-
-    // Enviar dados binários usando mysqli_stmt::send_long_data
-    for ($i = 0; $i < count($carPhotos); $i++) {
-        $stmt->send_long_data($i + 4, $carPhotos[$i]);
-    }
-
-    // Executar a declaração
-    $stmt->execute();
-
-    // Verificar sucesso
-    if ($stmt->affected_rows > 0) {
-        // Redirecionar de volta para register.php com a mensagem
-        header("Location: register.php?registration=success");
-        exit();
-    } else {
-        echo "Erro ao inserir dados: " . $stmt->error;
-    }
-
-    // Fechar declaração e conexão
-    $stmt->close();
-    $conn->close();
 }
+
+$sql = "INSERT INTO car_informations (customer_name, service_type, car_name, car_plate, car_image_1, car_image_2, car_image_3, car_image_4, carCPF, email, today_day, pick_up_Day, total_value, car_mileage)
+        VALUES ('$customerName', '$jobType', '$carName', '$carPlate', '" . $carPhotos[0] . "', '" . $carPhotos[1] . "', '" . $carPhotos[2] . "', '" . $carPhotos[3] . "', '$carCPF', '$carEmail', '$todayDay', '$pickUpDay', $totalValue, '$carMileage')";
+
+if ($conn->query($sql) === TRUE) {
+    header("Location: register.php?registration=success");
+    exit();
+} else {
+    echo "Erro ao executar a declaração: " . $conn->error;
+}
+
+$conn->close();
 ?>
 

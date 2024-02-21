@@ -14,44 +14,41 @@ if (isset($requestData['carId'])) {
             throw new Exception("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "SELECT * FROM car_informations WHERE id_car = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $requestData['carId']); // Assuming id_car is an integer
-        $stmt->execute();
+        $carId = intval($requestData['carId']);
 
-        $result = $stmt->get_result();
+        $sql = "SELECT customer_name, carCPF, email, service_type, car_name, car_plate, car_mileage, today_day, pick_up_Day, total_value,
+                car_image_1, car_image_2, car_image_3, car_image_4
+                FROM car_informations WHERE id_car = $carId";
+        $result = $conn->query($sql);
 
-        if ($result->num_rows > 0) {
+        if ($result) {
             $record = $result->fetch_assoc();
 
-            // Manipulação de imagens
-            $imageKeys = array('car_image_1', 'car_image_2', 'car_image_3', 'car_image_4');
-            foreach ($imageKeys as $imageKey) {
-                if (!empty($record[$imageKey])) {
-                    $record[$imageKey] = base64_encode($record[$imageKey]); // Convertendo para base64
+            // Encode image fields
+            for ($i = 1; $i <= 4; $i++) {
+                $imageFieldName = "car_image_$i";
+                if (!empty($record[$imageFieldName])) {
+                    $record[$imageFieldName] = base64_encode($record[$imageFieldName]);
                 }
             }
 
             header('Content-Type: application/json');
             echo json_encode($record);
         } else {
-            // Se nenhum dado for encontrado para o ID do carro fornecido
+            // If no data is found for the provided Car ID
             header('Content-Type: application/json');
             echo json_encode(array('error' => 'No data found for the provided Car ID.'));
         }
 
-        $stmt->close();
         $conn->close();
     } catch (Exception $e) {
-        // Em caso de erro, envie uma resposta JSON com a mensagem de erro
-        $errorMessage = "Error in view_information_handler.php: " . $e->getMessage();
+        $errorMessage = "Error in view_information_handler_edit.php: " . $e->getMessage();
         error_log($errorMessage);
 
         header('Content-Type: application/json');
         echo json_encode(array('error' => 'Error fetching details. Please try again later.'));
     }
 } else {
-    // Se o ID do carro não for fornecido corretamente na solicitação
     header('Content-Type: application/json');
     echo json_encode(array('error' => 'Invalid request.'));
 }
